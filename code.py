@@ -71,6 +71,16 @@ class Factor:
 
 # Algorithm 9.1
 def sum_product_VE(factors: list[Factor], vars_eliminate: list[str]):
+    """
+    params
+    ------
+    - factors: list of Factor objects
+    - vars_eliminate: list of strings, each the variables in order of elimination
+
+    returns
+    -------
+    - factor (Factor object) after elimination
+    """
     for variable in vars_eliminate: # ordering
         factors = sum_product_eliminate_var(factors, variable)
     
@@ -139,7 +149,7 @@ f6 = Factor(['C','F'], array)
 
 def main():
 
-    # first run
+    # example 
     eliminated_factor = sum_product_VE(factors=[f1, f2, f3, f4, f5, f6], vars_eliminate=['A','F','B','C'])
 
     print("scope of new factor after elimination:", eliminated_factor.scope)
@@ -158,40 +168,5 @@ def main():
     print("\tP(D = 1 | E=1) = ", c * normalized_elim_factor.values[1,1])
     print('\n===================================================')
 
-    # check using  bayes rule
-
-    # finding P(E=1)
-    eliminated_factor = sum_product_VE(factors=[f1, f2, f3, f4, f5, f6], vars_eliminate=['A','F','B','C','D'])
-
-    print("scope of new factor after elimination:", eliminated_factor.scope)
-    print("values of factor:\n", eliminated_factor.values)
-
-    total_product : Factor = f1 * f2 * f3 * f4 * f5 * f6
-    partition = np.sum(total_product.values)
-    normalized_elim_factor = Factor(eliminated_factor.scope, eliminated_factor.values/partition)
-    print("values of factor after division by the partition function:\n", normalized_elim_factor.values)
-    print("notice that its already normalized because we started with probabilities.")
-    
-    p_E1 = normalized_elim_factor.values[1]
-
-    # finding P(D=1)
-    eliminated_factor = sum_product_VE(factors=[f1, f2, f3, f4, f5, f6], vars_eliminate=['A','F','B','C','E'])
-
-    print("scope of new factor after elimination:", eliminated_factor.scope)
-    print("values of factor:\n", eliminated_factor.values)
-
-    total_product : Factor = f1 * f2 * f3 * f4 * f5 * f6
-    partition = np.sum(total_product.values)
-    normalized_elim_factor = Factor(eliminated_factor.scope, eliminated_factor.values/partition)
-    print("values of factor after division by the partition function:\n", normalized_elim_factor.values)
-    print("notice that its already normalized because we started with probabilities.")
-    p_D1 = normalized_elim_factor.values[1]
-
-    # bayes rule
-    print('\n====================== Results with Bayes Rule:\n')
-    print("P(E=1) =", p_E1)
-    print("P(D=1) = ", p_D1)
-    print('result with bayes rule = ', f5.values[1,1] * p_D1 / p_E1)
-    print('===============================\n')
 
 main()
